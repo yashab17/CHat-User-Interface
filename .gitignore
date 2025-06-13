@@ -1,0 +1,29 @@
+# Node
+chat-app-frontend/node_modules/
+npm-debug.log*
+
+# Build
+# dist/
+# build/
+
+# Environment
+# .env
+
+# # Logs
+# logs/
+# *.log
+
+# # System files
+# .DS_Store
+# Thumbs.db
+
+# # VS Code
+# .vscode/
+
+# # IDEs
+# .idea/
+# *.sublime-workspace
+# *.sublime-project
+
+# # OS
+# *.swp
