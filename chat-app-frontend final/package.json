@@ -2,7 +2,7 @@
   "name": "chat-app-frontend",
   "version": "1.0.0",
   "description": "A chat application frontend built with React and TypeScript.",
-  "main": "src/index.tsx",
+  "main": "src/index.jsx",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

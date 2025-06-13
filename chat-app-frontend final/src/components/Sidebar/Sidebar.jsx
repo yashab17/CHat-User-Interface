@@ -1,7 +1,6 @@
 import React from 'react';
-// import './Sidebar.css'; // Assuming you have a CSS file for styling
 
-const Sidebar: React.FC = () => {
+const Sidebar = () => {
     return (
         <div className="sidebar">
             <h1 className="brand">ChatApp</h1>
