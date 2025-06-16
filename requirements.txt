@@ -1,0 +1,25 @@
+fastapi
+uvicorn
+pydantic
+langchain-openai
+llama-index-embeddings-clip
+fastapi
+llama-index-multi-modal-llms-openai
+llama-index-vector-stores-qdrant
+llama_index ftfy regex tqdm
+torch torchvision
+matplotlib scikit-image
+U qdrant_client
+-upgrade sentence-transformers==2.2.2 transformers==4.33.2
+langchain-openai
+opencv-python
+imageio imageio-ffmpeg
+moviepy
+imageio==2.4.1
+moviepy==1.0.3
+faster-whisper
+torch
+huggingface_hub[hf_xet]
+faster_whisper
+
+
