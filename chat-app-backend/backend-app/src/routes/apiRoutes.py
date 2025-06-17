@@ -1,8 +1,15 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException,status, Depends,Header
 from pydantic import BaseModel
 from typing import List, Any, Optional
 from main import run_pipeline
-from LLm_Calling import final_pipeline
+from LLM_Calling import final_pipeline
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Load environment variables from .env
+
+API_KEY = os.getenv("API_KEY")
+
 
 router = APIRouter()
 
@@ -15,13 +22,18 @@ class QueryRequest(BaseModel):
     query: str
     
 
-class SynthesizeRequest(
-    BaseModel):
-    prompt: str
+
+
+def verify_api_key(x_api_key: str = Header(...)):
+    if x_api_key != API_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or missing API Key",
+        )
 
 # --- Endpoints ---
 @router.post("/process")
-async def input_processing(request: ExtractRequest):
+async def input_processing(request: ExtractRequest,_ = Depends(verify_api_key)):
     # Implement your logic he
     video_input= request.videoPath
     output_path = request.outputPath
@@ -31,20 +43,12 @@ async def input_processing(request: ExtractRequest):
 
 
 @router.post("/query")
-async def query_vector_db(request: QueryRequest):
+async def query_vector_db(request: QueryRequest,_ = Depends(verify_api_key)):
     # Implement your logic here
     query = request.query
     # Assuming you have a Qdrant client and embedder model initialized  
-    qdrant_client=request.qdrant_client
-    embedder_model=request.embedder_model
-    config = {      "COLLECTION_NAME": "multimodal_video_data",
-        "VECTOR_DIM": 768,  # Adjust as needed                      
-        "CHUNK_SIZE": 512,  # Adjust as needed                          
-        "CHUNK_OVERLAP": 50  # Adjust as needed
-    }
-    final_output = final_pipeline(qdrant_client, embedder_model, config, query) 
+    final_output = final_pipeline(query) 
     return {"result": final_output}
 
-@router.get("/query")
 
 

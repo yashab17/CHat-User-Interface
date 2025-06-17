@@ -22,6 +22,8 @@
 # // };
 
 import httpx
+import os
+from openai import OpenAI
 
 # async def prepare_and_call_llm(prompt: str, results_final: list) -> str:
 #     # Extract and format video frames
@@ -106,36 +108,85 @@ async def call_llm(prompt: str, results_final:dict = None) -> str:
     )
 
         # Compose final prompt
-        final_prompt = f"""
-You are an intelligent VideoRag Interface that helps users find answers from questions based on specific information from long-form videos.
+        #final_prompt = f"""
+# You are an intelligent VideoRag Interface that helps users find answers from questions based on specific information from long-form videos.
 
-The user has asked a question based on video content. You have access to the most relevant transcript excerpts and visual snapshots (frames) retrieved using semantic similarity from a vector database.
+# The user has asked a question based on video content. You have access to the most relevant transcript excerpts and visual snapshots (frames) retrieved using semantic similarity from a vector database.
 
-Use both the transcript and visual context to understand the intent behind the question and synthesize a clear, accurate, and concise response.
+# Use both the transcript and visual context to understand the intent behind the question and synthesize a clear, accurate, and concise response.
+# User Question: "{prompt}"
+
+#         Transcript Context:
+#         {text_chunks}
+
+#         Relevant Frame References:
+#         {image_refs}
+#         """
+        
+        
+    #     async with httpx.AsyncClient() as client:
+    #         response = await client.post(
+    #             "http://localhost:8000/query",
+    #             json={
+    #                 "model": "qwen/qwen2.5-vl-72b-instruct:free",
+    #                 "prompt": final_prompt,
+    #                 "stream": False 
+    #             }
+    #    )
+    #         response.raise_for_status()
+        client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=os.getenv("API_KEY"),
+        )
+
+       
+       # Start with the textual context
+        content_blocks = [
+    {
+        "type": "text",
+        "text": f"""
+You are an intelligent VideoRAG Interface that helps users answer questions based on long-form video content.
+
+You are given:
+- Transcript excerpts from the video
+- Visual snapshots (frames)
+Both were retrieved using semantic similarity from a vector database.
+
+Use these to understand the user's intent and generate an accurate and concise answer.
+
 User Question: "{prompt}"
 
-        Transcript Context:
-        {text_chunks}
+{time_context}
 
-        Relevant Frame References:
-        {image_refs}
-        """
-        
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                "http://localhost:8000/query",
-                json={
-                    "model": "qwen/qwen2.5-vl-72b-instruct:free",
-                    "prompt": final_prompt,
-                    "stream": False 
-                }
-       )
-            response.raise_for_status()
-            return {
-        "synthesized_answer": response.json()["response"],
-        "start_timestamp": start_ts,
-        "end_timestamp": end_ts
+Transcript Snippets:
+{text_chunks}
+
+Relevant Frame References (timestamps + filenames only, full visuals sent below):
+{image_refs}
+"""
     }
+]
+
+# Then append all actual image blocks
+        for img in results_final["images"]:
+              content_blocks.append({
+                "type": "image_url",
+                "image_url": {
+                "url": img["frame"]
+                             }
+                                    })
+
+        completion = client.chat.completions.create(
+        
+            model="qwen/qwen2.5-vl-72b-instruct:free",
+            content=content_blocks
+ )
+
+        return {
+                "synthesized_answer": completion.choices[0].message.content,
+                "start_timestamp": start_ts,
+                "end_timestamp": end_ts
+            }
     except Exception as error:
         print("Error calling LLM:", str(error))
         raise
