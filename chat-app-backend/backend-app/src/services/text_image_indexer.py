@@ -1,5 +1,5 @@
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from llama_index.core.schema import TextNode, ImageNode
+from llama_index.schema import TextNode, ImageNode
 import os
 from PIL import Image
 

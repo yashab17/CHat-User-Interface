@@ -4,7 +4,7 @@
 # };
 
 import os
-from moviepy.editor import VideoFileClip
+from moviepy import VideoFileClip
 
 class AudioExtractor:
     def extract_audio(self, video_folder, output_folder):

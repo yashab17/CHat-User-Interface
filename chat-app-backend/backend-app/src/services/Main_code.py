@@ -1,9 +1,15 @@
-    
-video_folder_path = r"C:\Users\shahk\OneDrive\Documents\VRAG\Video"
-working_directory = r"C:\Users\shahk\OneDrive\Documents\VRAG\Other_Folder"
+from frame_extractor import FrameExtractor
+from audio_extractor import AudioExtractor
+from transcriber import AudioTranscriber
+#from summarizer import TranscriptSummarizer
+from embedder import EmbeddingProcessor
+from qdrant_handler import QdrantHandler
+from text_image_indexer import TextImageIndexer
+from searcher import MultimodalSearcher
+import os
+import config
 
 def run_pipeline(video_folder, working_dir):
-    qdrant_client, embedder_model = run_pipeline(video_folder_path, working_directory)
     frame_dir = os.path.join(working_dir, "Frames")
     audio_dir = os.path.join(working_dir, "Audio")
     transcript_dir = os.path.join(working_dir, "Transcript")
@@ -18,8 +24,8 @@ def run_pipeline(video_folder, working_dir):
     print("📝 Transcribing audio...")
     AudioTranscriber(config.TRANSCRIPTION_MODEL).transcribe(audio_dir, transcript_dir)
 
-    print("🧠 Summarizing transcripts...")
-    TranscriptSummarizer().summarize(transcript_dir, summary_dir)
+ #   print("🧠 Summarizing transcripts...")
+ #   TranscriptSummarizer().summarize(transcript_dir, summary_dir)
 
     print("📊 Generating embeddings...")
     embedder = EmbeddingProcessor(config.EMBEDDING_MODEL)
@@ -33,3 +39,9 @@ def run_pipeline(video_folder, working_dir):
 
     print("✅ All data uploaded to Qdrant!")
     return qdrant, embedder
+
+if __name__ == "__main__":
+    video_folder_path = r"C:\Users\Yash S\Documents\vrag_videos"
+    working_directory = r"C:\Users\Yash S\Documents\vrag_videos\Output_Videos"
+
+    qdrant_client, embedder_model = run_pipeline(video_folder_path, working_directory)

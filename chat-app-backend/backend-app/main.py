@@ -20,7 +20,7 @@ app.add_middleware(
 from frame_extractor import FrameExtractor
 from audio_extractor import AudioExtractor
 from transcriber import AudioTranscriber
-from summarizer import TranscriptSummarizer
+#from summarizer import TranscriptSummarizer
 from embedder import EmbeddingProcessor
 from qdrant_handler import QdrantHandler
 from text_image_indexer import TextImageIndexer
@@ -43,8 +43,8 @@ def run_pipeline(video_folder, working_dir):
     print("📝 Transcribing audio...")
     AudioTranscriber(config.TRANSCRIPTION_MODEL).transcribe(audio_dir, transcript_dir)
 
-    print("🧠 Summarizing transcripts...")
-    TranscriptSummarizer().summarize(transcript_dir, summary_dir)
+ #   print("🧠 Summarizing transcripts...")
+ #   TranscriptSummarizer().summarize(transcript_dir, summary_dir)
 
     print("📊 Generating embeddings...")
     embedder = EmbeddingProcessor(config.EMBEDDING_MODEL)
@@ -60,11 +60,7 @@ def run_pipeline(video_folder, working_dir):
     return qdrant, embedder
 
 if __name__ == "__main__":
-    video_folder_path = r"C:\Users\shahk\OneDrive\Documents\VRAG\Video"
-    working_directory = r"C:\Users\shahk\OneDrive\Documents\VRAG\Other_Folder"
+    video_folder_path = r"C:\Users\KrupaShah\Downloads\OneDrive_2025-06-04\test video\WHat makes computer work"
+    working_directory = r"C:\Users\KrupaShah\Downloads\OneDrive_2025-06-04\test video\Other_Folder"
 
     qdrant_client, embedder_model = run_pipeline(video_folder_path, working_directory)
-
-    print("🔎 Ready to search! Run interactively via MultimodalSearcher if needed.")
-    searcher = MultimodalSearcher(qdrant_client, embedder_model, config.COLLECTION_NAME)
-    searcher.search("What is a computer?")

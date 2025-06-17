@@ -14,6 +14,9 @@ class MultimodalSearcher:
         - Finds the top text nodes
         - Finds image frames from the same video closest in time
         """
+        results_final={}
+        valid_images=[]
+
         query_vec = self.embedder.embed_text(query)
         results = self.qdrant.search(query_vec, top_k=top_k)
 
@@ -49,7 +52,7 @@ class MultimodalSearcher:
 
         if not valid_text:
             print(f"❌ No relevant results found for: \"{query}\" (score < {min_score})")
-            return
+            return  
 
         for text_node in valid_text[:top_k]:
             video_id = text_node["video_id"]
@@ -63,10 +66,29 @@ class MultimodalSearcher:
             print(f"[📝 TEXT] (Video: {video_id}, Time: {text_ts:.2f}s, Score: {score:.4f})")
             print(text_node["text"])
 
+        
+            
+
             if closest_image and closest_image["path"]:
                 print(f"[🖼️ IMAGE] (~{closest_image['timestamp_guess']:.2f}s): {closest_image['frame']}")
                 display(IPyImage(closest_image["path"]))
+                valid_images.append(closest_image)
             else:
                 print("⚠️ No matching image found or image path missing.")
 
             print("—" * 60)
+        results_final = {"text": valid_text[:top_k], "images": valid_images}
+
+        return results_final
+    
+
+
+#     result_entry = {
+        #     "video_id": video_id,
+        #     "text_timestamp": text_ts,
+        #     "text_score": score,
+        #     "text": text_node["text"],
+        #     "image_timestamp": closest_image["timestamp_guess"] if closest_image else None,
+        #     "image_frame": closest_image["frame"] if closest_image else None,
+        #     "image_path": closest_image["path"] if closest_image else None
+        # }
