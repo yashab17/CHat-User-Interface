@@ -92,6 +92,10 @@ async def call_llm(prompt: str, results_final:dict = None) -> str:
             for i, item in enumerate(results_final["text"])
         ]
     )
+        timestamps = [item["timestamp"] for item in results_final["images"] if "timestamp" in item]
+        start_ts = min(timestamps) if timestamps else None
+        end_ts = max(timestamps) if timestamps else None
+
 
     # Build image references
         image_refs = "\n".join(
@@ -127,7 +131,11 @@ User Question: "{prompt}"
                 }
        )
             response.raise_for_status()
-            return response.json()["response"]
+            return {
+        "synthesized_answer": response.json()["response"],
+        "start_timestamp": start_ts,
+        "end_timestamp": end_ts
+    }
     except Exception as error:
         print("Error calling LLM:", str(error))
         raise

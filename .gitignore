@@ -5,6 +5,7 @@ chat-app-frontend final/node_modules
 chat-app-backend/backend-app/node_modules
 node_modules
 npm-debug.log*
+myenv
 
 # Build
 # dist/

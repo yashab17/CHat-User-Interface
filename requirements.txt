@@ -21,10 +21,7 @@ opencv-python
 imageio 
 imageio-ffmpeg
 moviepy
-sentence-transformers==2.2.2
-transformers==4.33.2
-imageio==2.4.1
-moviepy==1.0.3
+sentence-transformers
 faster-whisper
 huggingface_hub[hf_xet]
 faster_whisper
