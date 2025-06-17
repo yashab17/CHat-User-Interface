@@ -15,7 +15,8 @@ class QueryRequest(BaseModel):
     query: str
     
 
-class SynthesizeRequest(BaseModel):
+class SynthesizeRequest(
+    BaseModel):
     prompt: str
 
 # --- Endpoints ---
