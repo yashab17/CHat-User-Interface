@@ -1,0 +1,93 @@
+import json
+from IPython.display import Image as IPyImage, display
+from utils import extract_frame_time_from_filename
+
+class MultimodalSearcher:
+    def __init__(self, qdrant_handler, embedder, collection_name):
+        self.qdrant = qdrant_handler
+        self.embedder = embedder
+        self.collection_name = collection_name
+
+    def search(self, query, top_k=5, min_score=0.7):
+        print(f"🔍 Running multimodal search for: \"{query}\"")
+        query_vec = self.embedder.embed_text(query)
+
+        # Over-fetch to increase chance of getting both text and image nodes
+        results = self.qdrant.search(query_vec, top_k=top_k * 5)
+
+        text_results = []
+        image_results = []
+
+        for res in results:
+            payload = res.payload
+            try:
+                content = json.loads(payload.get("_node_content", "{}"))
+            except json.JSONDecodeError:
+                print("⚠️ Skipping result with malformed _node_content.")
+                continue
+
+            node_type = payload.get("type", "").lower()
+
+            if node_type == "text":
+                text_results.append({
+                    "text": content.get("text", ""),
+                    "timestamp": float(payload.get("timestamp", 0)),
+                    "video_id": payload.get("video_id", "unknown"),
+                    "score": res.score
+                })
+
+            elif node_type == "image":
+                image_path = content.get("image") or payload.get("image_path", "")
+                if not image_path:
+                    print("⚠️ Image path missing for an image node. Skipping.")
+                    continue
+
+                frame = payload.get("source", "")
+                ts_guess = extract_frame_time_from_filename(frame)
+
+                image_results.append({
+                    "path": image_path,
+                    "frame": frame,
+                    "video_id": payload.get("video_id", "unknown"),
+                    "timestamp_guess": ts_guess if ts_guess else -1,
+                    "score": res.score
+                })
+
+        # Filter and sort by score
+        valid_text = sorted(
+            [t for t in text_results if t["score"] >= min_score],
+            key=lambda x: -x["score"]
+        )
+        valid_images = sorted(
+            [i for i in image_results if i["score"] >= min_score],
+            key=lambda x: -x["score"]
+        )
+
+        if not valid_text and not valid_images:
+            print(f"❌ No relevant text or images found (score < {min_score}).")
+            return
+
+        print(f"\n✅ Top {top_k} Text Results:")
+        for text_node in valid_text[:top_k]:
+            print(f"[📝 TEXT] (Video: {text_node['video_id']}, Time: {text_node['timestamp']:.2f}s, Score: {text_node['score']:.4f})")
+            print(text_node["text"])
+            print("—" * 60)
+
+        print(f"\n🖼️ Top {top_k} Image Results:")
+        for image_node in valid_images[:top_k]:
+            if not image_node["path"]:
+                print(f"⚠️ Skipping image with missing path. Frame: {image_node['frame']}")
+                continue
+            print(f"[🖼️ IMAGE] (Video: {image_node['video_id']}, ~{image_node['timestamp_guess']:.2f}s, Score: {image_node['score']:.4f})")
+            print(f"Frame: {image_node['frame']}")
+            try:
+                display(IPyImage(image_node["path"]))
+            except Exception as e:
+                print(f"⚠️ Failed to display image: {e}")
+            print("—" * 60)
+
+        return {
+            "query": query,
+            "top_text": valid_text[:top_k],
+            "top_images": valid_images[:top_k]
+        }
