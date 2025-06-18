@@ -41,8 +41,8 @@ def run_pipeline(video_folder, working_dir):
     return qdrant, embedder
 
 if __name__ == "__main__":
-    video_folder_path = r"C:\Users\KrupaShah\Downloads\OneDrive_2025-06-04\test video\WHat makes computer work"
-    working_directory = r"C:\Users\KrupaShah\Downloads\OneDrive_2025-06-04\test video\Other_Folder"
+    video_folder_path = r"C:\Users\Yash S\Documents\vrag_videos"
+    working_directory = r"C:\Users\Yash S\Documents\Output_Videos"
 
     qdrant_client, embedder_model = run_pipeline(video_folder_path, working_directory)
 

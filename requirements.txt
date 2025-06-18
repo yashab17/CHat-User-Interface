@@ -4,7 +4,7 @@ pydantic
 qdrant-client
 langchain-openai
 llama-index-embeddings-clip
-fastapi
+openai
 llama-index-multi-modal-llms-openai
 llama-index-vector-stores-qdrant
 llama_index
@@ -26,4 +26,6 @@ faster-whisper
 huggingface_hub[hf_xet]
 faster_whisper
 httpx
+IPython
+
 

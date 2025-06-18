@@ -1,6 +1,7 @@
 from searcher import MultimodalSearcher
 #from OllamaService import call_llm
 from embedder import EmbeddingProcessor
+from llm_response_generator import LLMResponder 
 from qdrant_handler import QdrantHandler
 import config
 
@@ -22,9 +23,23 @@ def final_pipeline(Query):
     similarity_search_results = Video_Transcript.search(query=Query)
 
     print("💬 Calling LLM...")
-    final_output = call_llm(similarity_search_results, prompt=Query)
+    Output_generation=LLMResponder(config.API_KEY)
+    final_output = Output_generation.call_llm(similarity_search_results, prompt=Query)
     
     return final_output
+
+if __name__ == "__main__":
+
+    qdrant_client, embedder_model = run_pipeline(video_folder_path, working_directory)
+
+    print("🔎 Ready to search! Run interactively via MultimodalSearcher if needed.")
+    searcher = MultimodalSearcher(qdrant_client, embedder_model, config.COLLECTION_NAME)
+    searcher.search("Yash")
+
+
+
+
+
 
 
 
