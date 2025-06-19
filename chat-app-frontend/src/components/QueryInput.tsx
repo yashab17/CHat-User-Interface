@@ -45,7 +45,7 @@ const QueryInput: React.FC<Props> = ({
         },
         body: JSON.stringify({
           video_url: videoUrl,
-          question: query,
+          query: query,
         }),
       });
 

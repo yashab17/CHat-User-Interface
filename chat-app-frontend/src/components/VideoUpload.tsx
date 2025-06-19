@@ -15,7 +15,8 @@ const VideoUpload: React.FC<Props> = ({ setVideoUrl, setError }) => {
 {/*This is to handle video file selection, upload it to the backend and retrieve the processed file URL */}
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) 
+      return;
 
     setError(null);
     setLoading(true);
@@ -40,36 +41,54 @@ const VideoUpload: React.FC<Props> = ({ setVideoUrl, setError }) => {
       return;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append("videoPath", filename);
+  //   if (fileUrlRef.current) {
+  //     URL.revokeObjectURL(fileUrlRef.current);
+  //   }
+ 
+  //   const url = URL.createObjectURL(file);
+  //   fileUrlRef.current = url;
+ 
+  //   setVideoUrl(url);
+  //   setLoading(false);
+  // };
+ 
+  // useEffect(() => {
+  //   return () => {
+  //     if (fileUrlRef.current) {
+  //       URL.revokeObjectURL(fileUrlRef.current);
+  //     }
+  //   };
+  // }, []);
 
-     const res = await fetch("http://localhost:8000/process", {
+  try {
+    const formData = new FormData();
+    formData.append("videoPath", filename);
+
+    const res = await fetch("http://localhost:8000/process", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",   // ✅ This tells FastAPI to treat it as JSON
       },
       body: JSON.stringify({
-        videoPath: filename,                  // ✅ Send as JSON object
+        videoPath: filename                  // ✅ Send as JSON object
       }),
     });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Upload failed");
-      }
-    //process the response of the server
-      const data = await res.json();
-      const fullUrl = `http://localhost:8000${data.url}`;
-      setVideoUrl(fullUrl);
-      setUploadedFilename(data.filename);
-      
-    } catch (err: any) {
-      setError(err.message || "Something went wrong.");
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || "Upload failed");
     }
-  };
+    const data = await res.json();
+    const fullUrl = `http://localhost:8000${data.url}`;
+    setVideoUrl(fullUrl);
+    setUploadedFilename(data.filename);
+
+  } catch (err: any) {
+    setError(err.message || "Something went wrong.");
+  } finally {
+    setLoading(false);
+  }
+}
 
   {/*Upload a video function on left sidebar that's called in the main class*/}
   return (
@@ -96,4 +115,6 @@ const VideoUpload: React.FC<Props> = ({ setVideoUrl, setError }) => {
   );
 };
 
+
 export default VideoUpload;
+

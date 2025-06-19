@@ -20,7 +20,7 @@ router = APIRouter()
 # --- Request Schemas ---
 class ExtractRequest(BaseModel):
     videoPath: str
-    #outputPath: str
+#     #outputPath: str
 
 class QueryRequest(BaseModel):
     query: str
@@ -42,7 +42,7 @@ async def input_processing(request: ExtractRequest):
     video_input = request.videoPath
     #output_path = request.outputPath  # ✅ Use from request
     print("Processing started")
-    run_pipeline(video_input)
+    run_pipeline(video_file=video_input)
     return {"message": "Embedding completed successfully. You can now query the vector database."}
 
 
@@ -55,7 +55,7 @@ async def query_vector_db(request: QueryRequest):
     query = request.query
     # Assuming you have a Qdrant client and embedder model initialized  
     final_output = final_pipeline(query) 
-    print("output shown")
+    # print("output shown")
     return final_output
 
 

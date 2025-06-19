@@ -56,15 +56,18 @@ class MultimodalSearcher:
                     "timestamp_guess": ts_guess if ts_guess else -1,
                     "score": res.score
                 })
+            else:
+                print(f"⚠️ Unknown node type '{node_type}' in result. Skipping.")
 
+            
         valid_text = sorted(
             [t for t in text_results if t["score"] >= min_score],
             key=lambda x: -x["score"]
-        )
+            )
         valid_images = sorted(
-            [i for i in image_results if i["score"] >= min_score],
+                [i for i in image_results if i["score"] >= min_score],
             key=lambda x: -x["score"]
-        )
+            )
 
         if not valid_text and not valid_images:
             print(f"❌ No relevant text or images found (score < {min_score}).")
@@ -76,7 +79,7 @@ class MultimodalSearcher:
             print(text_node["text"])
             print("—" * 60)
 
-        print(f"\n🖼️ Top {top_k} Image Results:")
+            print(f"\n🖼️ Top {top_k} Image Results:")
         for image_node in valid_images[:top_k]:
             if not image_node["path"]:
                 print(f"⚠️ Skipping image with missing path. Frame: {image_node['frame']}")
@@ -87,9 +90,9 @@ class MultimodalSearcher:
                 display(IPyImage(image_node["path"]))
             except Exception as e:
                 print(f"⚠️ Failed to display image: {e}")
-            print("—" * 60)
+                print("—" * 60)
 
-        return {
-            "text": valid_text[:top_k],
-            "images": valid_images[:top_k]
-        }
+        final_output={"text": valid_text[:top_k],
+            "images": valid_images[:top_k]}
+        return final_output
+        

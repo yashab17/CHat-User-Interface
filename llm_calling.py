@@ -30,12 +30,9 @@ def final_pipeline(Query):
     
     return final_output
 
-if __name__ == "__main__":
-    final_pipeline(Query)
 
 
 
-    print("Final Output:", Output)
 
 
 

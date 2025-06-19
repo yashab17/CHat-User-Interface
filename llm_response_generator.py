@@ -33,8 +33,10 @@ class LLMResponder:
     def __init__(self):
         pass
     def call_llm(self, prompt: str, results_final:dict = None) -> str:    
+        print(results_final["text"])
+        print(results_final["images"])
         try:
-
+            
             text_chunks = "\n\n".join(
         [
             f"Text Snippet {i + 1} [{item['timestamp']:.2f}s]:\n{item['text']}"
@@ -42,9 +44,8 @@ class LLMResponder:
         ]
     )
             timestamps = [item["timestamp"] for item in results_final["images"] if "timestamp" in item]
-            start_ts = min(timestamps) if timestamps else None
-            #min(timestamps) for x in time(timestamps)
-            # #max(timestamps) for x in time(timestamps)if timestamps else None
+            start_ts =min(timestamps) if timestamps else None
+            
             end_ts = max(timestamps) if timestamps else None
 
 
@@ -57,7 +58,7 @@ class LLMResponder:
     )
             client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
-            api_key="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",
+            api_key="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",
         )
 
        
@@ -109,7 +110,7 @@ Relevant Frame References (timestamps + filenames only, full visuals sent below)
 
             return {
                 "synthesized_answer": completion.choices[0].message.content,
-                "start_timestamp": start_ts
+                # "start_timestamp": start_ts
             }
 
         except Exception as error:
