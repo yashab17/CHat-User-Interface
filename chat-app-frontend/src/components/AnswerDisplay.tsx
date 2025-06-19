@@ -7,7 +7,12 @@ interface Props {
 }
 
 const AnswerDisplay: React.FC<Props> = ({ answer, loading, error }) => {
+
+
   return (
+
+      
+
     <div className="mt-6 w-full max-w-3xl mx-auto" id="answer-box">
       {loading && (
         <div className="p-4 border rounded bg-blue-50 text-blue-700 font-medium">
@@ -30,6 +35,7 @@ const AnswerDisplay: React.FC<Props> = ({ answer, loading, error }) => {
         </div>
       )}
     </div>
+    
   );
 };
 

@@ -54,8 +54,10 @@ const QueryInput: React.FC<Props> = ({
       }
 
       const data = await response.json();
-
-      setAnswer(data.answer);
+      if (!data.synthesized_answer) {
+        throw new Error("No answer found for the given question.");
+      }
+      setAnswer(data.synthesized_answer);
       setAnswerTimestamp(data.timestamp);
 
       // Scroll to answer box

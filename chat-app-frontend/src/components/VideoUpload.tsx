@@ -7,16 +7,25 @@ interface Props {
 
 const MAX_FILE_SIZE_MB = 100;
 
+{/* */}
 const VideoUpload: React.FC<Props> = ({ setVideoUrl, setError }) => {
   const [loading, setLoading] = useState(false);
   const [uploadedFilename, setUploadedFilename] = useState<string | null>(null);
-
+  
+{/*This is to handle video file selection, upload it to the backend and retrieve the processed file URL */}
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setError(null);
     setLoading(true);
+
+    const a = document.createElement('a');
+            a.href = URL.createObjectURL(file);
+            const filename = `video-${new Date().toISOString()}.mp4`;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
 
     if (!file.type.startsWith('video/')) {
       setError('Please upload a valid video file.');
@@ -33,12 +42,17 @@ const VideoUpload: React.FC<Props> = ({ setVideoUrl, setError }) => {
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("videoPath", filename);
 
-      const res = await fetch("http://localhost:8000/upload", {
-        method: "POST",
-        body: formData,
-      });
+     const res = await fetch("http://localhost:8000/process", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",   // ✅ This tells FastAPI to treat it as JSON
+      },
+      body: JSON.stringify({
+        videoPath: filename,                  // ✅ Send as JSON object
+      }),
+    });
 
       if (!res.ok) {
         const err = await res.json();
@@ -57,6 +71,7 @@ const VideoUpload: React.FC<Props> = ({ setVideoUrl, setError }) => {
     }
   };
 
+  {/*Upload a video function on left sidebar that's called in the main class*/}
   return (
     <div className="relative h-full">
       <label htmlFor="video-upload" className="block text-2xl font-semibold mt-30 mb-4">
