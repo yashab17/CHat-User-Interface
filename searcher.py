@@ -1,14 +1,18 @@
 import json
 from IPython.display import Image as IPyImage, display
 from utils import extract_frame_time_from_filename
+import config  # ✅ Import centralized config
 
 class MultimodalSearcher:
-    def __init__(self, qdrant_handler, embedder, collection_name):
+    def __init__(self, qdrant_handler, embedder, collection_name=None):
         self.qdrant = qdrant_handler
         self.embedder = embedder
-        self.collection_name = collection_name
+        self.collection_name = collection_name or config.COLLECTION_NAME
 
-    def search(self, query, top_k=5, min_score=0.7):
+    def search(self, query, top_k=None, min_score=None):
+        top_k = top_k or config.TOP_K if hasattr(config, "TOP_K") else 5
+        min_score = min_score or config.MIN_SCORE if hasattr(config, "MIN_SCORE") else 0.7
+
         print(f"🔍 Running multimodal search for: \"{query}\"")
         query_vec = self.embedder.embed_text(query)
 
@@ -53,7 +57,6 @@ class MultimodalSearcher:
                     "score": res.score
                 })
 
-        # Filter and sort by score
         valid_text = sorted(
             [t for t in text_results if t["score"] >= min_score],
             key=lambda x: -x["score"]
@@ -87,7 +90,6 @@ class MultimodalSearcher:
             print("—" * 60)
 
         return {
-            "query": query,
-            "top_text": valid_text[:top_k],
-            "top_images": valid_images[:top_k]
+            "text": valid_text[:top_k],
+            "images": valid_images[:top_k]
         }

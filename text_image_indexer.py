@@ -1,14 +1,15 @@
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from llama_index.core.schema import TextNode, ImageNode
 import os
+import config
 from PIL import Image
 
 class TextImageIndexer:
     def __init__(self, embedder, chunk_size=200, chunk_overlap=50):
         self.embedder = embedder
         self.splitter = RecursiveCharacterTextSplitter(
-            chunk_size=chunk_size,
-            chunk_overlap=chunk_overlap,
+            chunk_size= config.CHUNK_SIZE,
+            chunk_overlap=config.CHUNK_OVERLAP,
             separators=["\n\n", "\n", ". ", " ", ""]
         )
 

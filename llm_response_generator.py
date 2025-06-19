@@ -30,9 +30,9 @@ from openai import OpenAI
 
 
 class LLMResponder:
-    def __init__(self, api_key):
-        openai.api_key = api_key
-    def call_llm(prompt: str, results_final:dict = None) -> str:    
+    def __init__(self):
+        pass
+    def call_llm(self, prompt: str, results_final:dict = None) -> str:    
         try:
 
             text_chunks = "\n\n".join(
@@ -43,6 +43,8 @@ class LLMResponder:
     )
             timestamps = [item["timestamp"] for item in results_final["images"] if "timestamp" in item]
             start_ts = min(timestamps) if timestamps else None
+            #min(timestamps) for x in time(timestamps)
+            # #max(timestamps) for x in time(timestamps)if timestamps else None
             end_ts = max(timestamps) if timestamps else None
 
 
@@ -55,7 +57,7 @@ class LLMResponder:
     )
             client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
-            api_key=os.getenv("API_KEY"),
+            api_key="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",
         )
 
        
@@ -75,7 +77,7 @@ Use these to understand the user's intent and generate an accurate and concise a
 
 User Question: "{prompt}"
 
-{time_context}
+
 
 Transcript Snippets:
 {text_chunks}
@@ -96,10 +98,14 @@ Relevant Frame References (timestamps + filenames only, full visuals sent below)
                                     })
 
             completion = client.chat.completions.create(
-        
-            model="qwen/qwen2.5-vl-72b-instruct:free",
-            content=content_blocks
- )
+                model="qwen/qwen2.5-vl-72b-instruct:free",
+                messages=[
+        {
+            "role": "user",
+            "content": content_blocks
+        }
+    ]
+)
 
             return {
                 "synthesized_answer": completion.choices[0].message.content,

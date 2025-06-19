@@ -1,11 +1,11 @@
 from sentence_transformers import SentenceTransformer
 from PIL import Image
-import os
+import config  # ✅ import central config
 
 class EmbeddingProcessor:
-    def __init__(self, model_name="clip-ViT-L-14"):
-        # Load a model that can embed both text and images
-        self.model = SentenceTransformer(model_name)
+    def __init__(self, model_name=None):
+        # Load embedding model from config, fallback to param if given
+        self.model = SentenceTransformer(model_name or config.EMBEDDING_MODEL)
 
     def embed_text(self, text):
         """

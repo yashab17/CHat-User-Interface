@@ -3,14 +3,9 @@ from moviepy import VideoFileClip
 
 class AudioExtractor:
     def extract_audio(self, video_path, output_folder):
-        # if not (os.path.isfile(video_path) and video_path.lower().endswith(".mp4")):
-        #     raise ValueError(f"❌ Expected a single .mp4 file. Got: {video_path}")
-        video_files = [f for f in os.listdir(video_path) if f.endswith('.mp4')]
+        if not (os.path.isfile(video_path) and video_path.lower().endswith(".mp4")):
+            raise ValueError(f"❌ Expected a single .mp4 file. Got: {video_path}")
 
-        if len(video_files) != 1:
-            raise ValueError(f"❌ Expected exactly one .mp4 file in {video_path}, found {len(video_files)}")
-
-        video_path = os.path.join(video_path, video_files[0])
         os.makedirs(output_folder, exist_ok=True)
 
         video_file = os.path.basename(video_path)

@@ -6,6 +6,10 @@ chat-app-backend/backend-app/node_modules
 node_modules
 npm-debug.log*
 myenv
+.env
+__pycache__/*
+vrag/
+qdrant/
 
 # Build
 # dist/

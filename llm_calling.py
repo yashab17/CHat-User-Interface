@@ -4,6 +4,8 @@ from embedder import EmbeddingProcessor
 from llm_response_generator import LLMResponder 
 from qdrant_handler import QdrantHandler
 import config
+from dotenv import load_dotenv
+import os
 
 # 🧠 Initialize once here (hardcoded setup)
 embedder_model = EmbeddingProcessor(config.EMBEDDING_MODEL)
@@ -23,18 +25,17 @@ def final_pipeline(Query):
     similarity_search_results = Video_Transcript.search(query=Query)
 
     print("💬 Calling LLM...")
-    Output_generation=LLMResponder(config.API_KEY)
-    final_output = Output_generation.call_llm(similarity_search_results, prompt=Query)
+    Output_generation=LLMResponder()
+    final_output = Output_generation.call_llm(Query,similarity_search_results)
     
     return final_output
 
 if __name__ == "__main__":
+    final_pipeline(Query)
 
-    qdrant_client, embedder_model = run_pipeline(video_folder_path, working_directory)
 
-    print("🔎 Ready to search! Run interactively via MultimodalSearcher if needed.")
-    searcher = MultimodalSearcher(qdrant_client, embedder_model, config.COLLECTION_NAME)
-    searcher.search("Yash")
+
+    print("Final Output:", Output)
 
 
 
