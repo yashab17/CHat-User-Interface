@@ -17,7 +17,7 @@ class MultimodalSearcher:
         query_vec = self.embedder.embed_text(query)
 
         # Over-fetch to increase chance of getting both text and image nodes
-        results = self.qdrant.search(query_vec, top_k=top_k * 5)
+        results = self.qdrant.search(query_vec, top_k=top_k * 20)
 
         text_results = []
         image_results = []
@@ -72,27 +72,30 @@ class MultimodalSearcher:
         if not valid_text and not valid_images:
             print(f"❌ No relevant text or images found (score < {min_score}).")
             return
-
+        final_text=[]
+        final_images=[]
         print(f"\n✅ Top {top_k} Text Results:")
         for text_node in valid_text[:top_k]:
             print(f"[📝 TEXT] (Video: {text_node['video_id']}, Time: {text_node['timestamp']:.2f}s, Score: {text_node['score']:.4f})")
             print(text_node["text"])
+            final_text.append(text_node)
             print("—" * 60)
 
-            print(f"\n🖼️ Top {top_k} Image Results:")
+        print(f"\n🖼️ Top {top_k} Image Results:")
         for image_node in valid_images[:top_k]:
             if not image_node["path"]:
                 print(f"⚠️ Skipping image with missing path. Frame: {image_node['frame']}")
                 continue
             print(f"[🖼️ IMAGE] (Video: {image_node['video_id']}, ~{image_node['timestamp_guess']:.2f}s, Score: {image_node['score']:.4f})")
             print(f"Frame: {image_node['frame']}")
+            final_images.append(image_node)
             try:
                 display(IPyImage(image_node["path"]))
             except Exception as e:
                 print(f"⚠️ Failed to display image: {e}")
                 print("—" * 60)
-
-        final_output={"text": valid_text[:top_k],
-            "images": valid_images[:top_k]}
+        
+        final_output={"text": final_text,
+            "images": final_images}
         return final_output
         

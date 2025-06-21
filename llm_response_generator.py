@@ -33,8 +33,9 @@ class LLMResponder:
     def __init__(self):
         pass
     def call_llm(self, prompt: str, results_final:dict = None) -> str:    
-        print(results_final["text"])
+        # print(results_final["text"])
         print(results_final["images"])
+
         try:
             
             text_chunks = "\n\n".join(
@@ -43,22 +44,22 @@ class LLMResponder:
             for i, item in enumerate(results_final["text"])
         ]
     )
-            timestamps = [item["timestamp"] for item in results_final["images"] if "timestamp" in item]
+            timestamps = [item["timestamp"] for item in results_final["text"] if "timestamp" in item]
             start_ts =min(timestamps) if timestamps else None
             
             end_ts = max(timestamps) if timestamps else None
 
-
+            print(timestamps,start_ts)
     # Build image references
             image_refs = "\n".join(
         [
-            f"Image Frame {i + 1} (~{img['timestamp_guess']:.2f}s): {img['frame']}"
+            f"Image Frame {i + 1} (~{img['timestamp']:.2f}s): {img['frame']}"
             for i, img in enumerate(results_final["images"])
         ]
     )
             client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
-            api_key="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",
+            api_key="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",
         )
 
        
@@ -110,7 +111,7 @@ Relevant Frame References (timestamps + filenames only, full visuals sent below)
 
             return {
                 "synthesized_answer": completion.choices[0].message.content,
-                # "start_timestamp": start_ts
+                "start_timestamp": start_ts
             }
 
         except Exception as error:

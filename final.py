@@ -15,8 +15,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 
-def get_video_hash(videopath):
-    video_path=r"C:\Users\YashShetty\Documents\test_videos\WhatMakesAComputer.mp4"
+def get_video_hash(video_path):
+
     # video_path = os.path.join(v_path, videopath)
     BUF_SIZE = 65536
     sha256 = hashlib.sha256()
@@ -46,9 +46,12 @@ def mark_video_processed(hash_str, record_file='embedded_videos.json'):
         json.dump(processed, f, indent=2)
 
 def run_pipeline(video_file):
-    directory = "C:/Users/YashShetty/Downloads"
+    directory = r"C:/Users/Yash S/Downloads"
     video_path= os.path.join(directory, video_file)
-    print(video_path)
+# def run_pipeline():
+#     video_path=r"C:/Users/Yash S/Documents/vrag_videos/WhatMakesAComputer.mp4"
+
+    # print(video_path)
     video_hash = get_video_hash(video_path)
     print("Hash Created")
     if is_video_processed(video_hash):
@@ -65,7 +68,7 @@ def run_pipeline(video_file):
 
 
     # Create output dirs
-    working_dir=r"C:/Users/YashShetty/Documents/test_videos/Output"
+    working_dir=r"C:/Users/Yash S/Documents/Output_Videos"
     frame_dir = os.path.join(working_dir, "Frames")
     audio_dir = os.path.join(working_dir, "Audio")
     transcript_dir = os.path.join(working_dir, "Transcript")
@@ -98,7 +101,7 @@ def run_pipeline(video_file):
     print("✅ All data uploaded to Qdrant!")
     return qdrant, embedder
 
-if __name__ == "__main__":
-    run_pipeline()
+# if __name__ == "__main__":
+#     print(run_pipeline())
     
     

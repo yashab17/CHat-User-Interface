@@ -30,6 +30,10 @@ def final_pipeline(Query):
     
     return final_output
 
+if __name__ == "__main__":
+    Query = "Tell me more about storage and processing in a computer."
+    result=final_pipeline(Query)
+    print("Final Output:", result)
 
 
 

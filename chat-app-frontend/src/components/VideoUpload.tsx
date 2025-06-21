@@ -21,6 +21,9 @@ const VideoUpload: React.FC<Props> = ({ setVideoUrl, setError }) => {
     setError(null);
     setLoading(true);
 
+    const previewUrl = URL.createObjectURL(file);
+    setVideoUrl(previewUrl);
+
     const a = document.createElement('a');
             a.href = URL.createObjectURL(file);
             const filename = `video-${new Date().toISOString()}.mp4`;
@@ -78,8 +81,8 @@ const VideoUpload: React.FC<Props> = ({ setVideoUrl, setError }) => {
       const err = await res.json();
       throw new Error(err.error || "Upload failed");
     }
-    const data = await res.json();
-    const fullUrl = `http://localhost:8000${data.url}`;
+    const data = await res.json(); 
+    const fullUrl = `http://localhost:8000/WhatMakesAComputer.mp4`;
     setVideoUrl(fullUrl);
     setUploadedFilename(data.filename);
 

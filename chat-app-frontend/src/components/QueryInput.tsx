@@ -5,7 +5,7 @@ interface Props {
   setAnswer: (answer: any) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  setAnswerTimestamp: (time: number | null) => void;
+  setAnswerTimestamp: (answerTimestamp: string | null) => void;
 }
 
 const QueryInput: React.FC<Props> = ({
@@ -58,7 +58,9 @@ const QueryInput: React.FC<Props> = ({
         throw new Error("No answer found for the given question.");
       }
       setAnswer(data.synthesized_answer);
-      setAnswerTimestamp(data.timestamp);
+      setAnswerTimestamp(data.start_timestamp);
+
+      console.log(data.start_timestamp)
 
       // Scroll to answer box
       setTimeout(() => {

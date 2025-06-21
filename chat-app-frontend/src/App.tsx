@@ -110,6 +110,8 @@ function App() {
                 <p className="text-xs text-gray-500 mt-2 italic">
                   Preview: first 10 seconds
                 </p>
+                <p>{videoUrl}</p>
+                
 
                 {/* Timestamp preview */}
                 {answerTimestamp !== null && (
@@ -118,8 +120,8 @@ function App() {
                       Answer Timestamp Preview
                     </h3>
                     <video
-                      src={videoUrl}
                       ref={answerVideoRef}
+                      src={videoUrl}
                       muted
                       controls
                       className="w-full rounded shadow"
@@ -141,6 +143,8 @@ function App() {
                     >
                       Play from {formatTime(answerTimestamp)}
                     </button>
+                                    <p>{videoUrl}</p>
+
                     <p className="text-xs text-gray-500 mt-1 italic">
                       Preview at {formatTime(answerTimestamp)}
                     </p>

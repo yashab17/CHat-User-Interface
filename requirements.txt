@@ -26,7 +26,7 @@ faster-whisper
 huggingface_hub[hf_xet]
 faster_whisper
 httpx
-IPython
+iPython
 langchain 
 
 

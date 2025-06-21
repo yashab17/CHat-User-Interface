@@ -42,7 +42,7 @@ async def input_processing(request: ExtractRequest):
     video_input = request.videoPath
     #output_path = request.outputPath  # ✅ Use from request
     print("Processing started")
-    run_pipeline(video_file=video_input)
+    x=run_pipeline()
     return {"message": "Embedding completed successfully. You can now query the vector database."}
 
 
